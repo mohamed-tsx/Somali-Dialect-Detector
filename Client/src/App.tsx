@@ -26,7 +26,7 @@ export default function App() {
               <Github className="h-5 w-5 text-muted-foreground hover:text-primary" />
             </a>
             <a
-              href=""
+              href="https://wa.me/252619880131"
               target="_blank"
               className="p-2 rounded-full hover:bg-muted transition-colors"
               aria-label="WhatsApp"
@@ -34,7 +34,7 @@ export default function App() {
               <MessageCircle className="h-5 w-5 text-muted-foreground hover:text-primary" />
             </a>
             <a
-              href="#"
+              href="https://www.facebook.com/mohammet122/"
               className="p-2 rounded-full hover:bg-muted transition-colors"
               aria-label="Facebook"
             >
