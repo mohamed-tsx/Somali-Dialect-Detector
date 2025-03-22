@@ -95,7 +95,6 @@ export default function AudioUploader() {
     // Add the file to FormData - try both "audio" and "file" keys
     // Your API might be expecting a specific key name
     formData.append("audio", file);
-    formData.append("file", file); // Some APIs use "file" as the key
 
     // Log FormData entries for debugging
     for (const pair of formData.entries()) {
@@ -296,7 +295,7 @@ export default function AudioUploader() {
                   {predictions[index]?.dialect && (
                     <div className="bg-primary/5 rounded-md p-3">
                       <p className="text-sm font-medium">Predicted Dialect:</p>
-                      <p className="text-lg font-bold text-primary">
+                      <p className="text-lg font-semibold text-primary">
                         {predictions[index].dialect}
                       </p>
                     </div>

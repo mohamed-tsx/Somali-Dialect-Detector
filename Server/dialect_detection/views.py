@@ -6,6 +6,7 @@ import librosa
 import numpy as np
 import joblib
 import os
+import re
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -27,35 +28,37 @@ def extract_mfcc(audio_path, sr=16000, n_mfcc=13):
 
 class PredictDialect(APIView):
     def post(self, request):
-        # Get the audio file from the request
-        audio_file = request.FILES.get('file')
+        audio_file = request.FILES.get('audio')  # Make sure the key matches frontend
 
         if not audio_file:
-            return Response({"error": "No file uploaded!"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "No audio file uploaded!"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Save the file temporarily
-        audio_path = f"temp_audio/{audio_file.name}"
+        # Sanitize file name to avoid invalid characters
+        safe_filename = re.sub(r'[:.]+', '-', audio_file.name)
+        audio_path = os.path.join("temp_audio", safe_filename)
         os.makedirs(os.path.dirname(audio_path), exist_ok=True)
+
+        # Save the audio file in chunks
         with open(audio_path, 'wb') as f:
-            f.write(audio_file.read())
-        
-        # Log to check if file is saved
+            for chunk in audio_file.chunks():
+                f.write(chunk)
+
         print(f"File saved to: {audio_path}")
-        
-        # Extract MFCC features from the uploaded file
-        mfcc_features = extract_mfcc(audio_path)
-        mfcc_features = mfcc_features.reshape(1, -1)
 
-        # Make a prediction
-        prediction = model.predict(mfcc_features)
-        print("Prediction:", prediction[0])
+        try:
+            # Extract MFCC and predict
+            mfcc_features = extract_mfcc(audio_path).reshape(1, -1)
+            prediction = model.predict(mfcc_features)[0]
+            print(f"Prediction: {prediction}")
 
-        if (prediction[0] == "standard_somali"):
-            # Delete the temporary audio file after prediction
-            os.remove(audio_path)
-            return Response({"dialect": 'This dialect is Standard Somali Dialect'}, status=status.HTTP_200_OK)
-        else :
-            # Delete the temporary audio file after prediction
-            os.remove(audio_path)
-            return Response({"dialect": 'This dialect is Maay Dialect'}, status=status.HTTP_200_OK)
+            result_text = "This dialect is Standard Somali Dialect" if prediction == "standard_somali" else "This dialect is Maay Dialect"
 
+            return Response({"dialect": result_text}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        finally:
+            # Clean up the temporary file
+            if os.path.exists(audio_path):
+                os.remove(audio_path)
