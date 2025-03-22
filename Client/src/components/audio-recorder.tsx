@@ -50,10 +50,10 @@ export default function AudioRecorder({
           type: "audio/wav",
         });
         const fileName = `recording-${new Date()
-          .toDateString()
-          .replace(/[:.]/g, "-")}.mp3`;
+          .toISOString()
+          .replace(/[:.]/g, "-")}.wav`;
         const audioFile = new File([audioBlob], fileName, {
-          type: "audio/mp3",
+          type: "audio/wav",
         });
 
         setRecordedAudio(audioFile);

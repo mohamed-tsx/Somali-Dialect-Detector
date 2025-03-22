@@ -63,8 +63,11 @@ export default function AudioPlayer({ file }: AudioPlayerProps) {
   const handleLoadedMetadata = () => {
     if (audioRef.current && isFinite(audioRef.current.duration)) {
       setDuration(audioRef.current.duration);
+      console.log(duration);
     }
   };
+
+  console.log(audioRef);
 
   const handleVolumeChange = (value: number[]) => {
     const newVolume = value[0];
@@ -96,6 +99,7 @@ export default function AudioPlayer({ file }: AudioPlayerProps) {
         <audio
           ref={audioRef}
           src={audioUrl}
+          preload="metadata"
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleLoadedMetadata}
           onEnded={() => setIsPlaying(false)}
