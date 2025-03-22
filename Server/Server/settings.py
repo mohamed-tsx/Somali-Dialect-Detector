@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',  # If you're using Django Rest Framework
     'corsheaders',     # If you're using CORS
-    'dialect_detection',  # Your custom app for dialect detection
+    'Server.dialect_detection',  # Your custom app for dialect detection
 ]
 
 
