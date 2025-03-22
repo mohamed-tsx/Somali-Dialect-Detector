@@ -198,7 +198,7 @@ export default function AudioUploader() {
                 Drag audio files here or click to upload
               </h3>
               <p className="text-sm text-muted-foreground">
-                Support for MP3, WAV, OGG, and other audio formats
+                Support for MP3 and WAV Audio Files
               </p>
             </div>
           </div>
