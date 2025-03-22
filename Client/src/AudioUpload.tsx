@@ -15,9 +15,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AudioPlayer from "@/components/audio-player";
-import AudioRecorder from "@/components/audio-recorder";
+// import AudioRecorder from "@/components/audio-recorder";
 import axios from "axios";
 import { toast, Toaster } from "sonner";
+import ComingSoon from "./components/audio-recorder-coming-soon";
 
 export default function AudioUploader() {
   const [audioFiles, setAudioFiles] = useState<File[]>([]);
@@ -69,9 +70,9 @@ export default function AudioUploader() {
     fileInputRef.current?.click();
   };
 
-  const addRecordedAudio = (audioFile: File) => {
-    setAudioFiles((prev) => [...prev, audioFile]);
-  };
+  // const addRecordedAudio = (audioFile: File) => {
+  //   setAudioFiles((prev) => [...prev, audioFile]);
+  // };
 
   const sendAudioToAPI = async (file: File, index: number) => {
     // Set loading state for this file
@@ -205,7 +206,8 @@ export default function AudioUploader() {
         </TabsContent>
 
         <TabsContent value="record" className="mt-4">
-          <AudioRecorder onRecordingComplete={addRecordedAudio} />
+          <ComingSoon />
+          {/* <AudioRecorder onRecordingComplete={addRecordedAudio} /> */}
         </TabsContent>
       </Tabs>
 
@@ -249,12 +251,12 @@ export default function AudioUploader() {
                       )}
                       {!sendingStatus[index] && <Send className="h-4 w-4" />}
                       {sendingStatus[index] === "success"
-                        ? "Sent"
+                        ? "Dialect Predicted"
                         : sendingStatus[index] === "loading"
-                        ? "Sending..."
+                        ? "Predicting Dialectedd..."
                         : sendingStatus[index] === "error"
                         ? "Retry"
-                        : "Send"}
+                        : "Predict Dialect"}
                     </Button>
                     <Button
                       variant="ghost"

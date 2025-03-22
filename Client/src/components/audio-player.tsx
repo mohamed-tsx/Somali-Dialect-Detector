@@ -18,6 +18,7 @@ export default function AudioPlayer({ file }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
+    console.log(file);
     const url = URL.createObjectURL(file);
     setAudioUrl(url);
 

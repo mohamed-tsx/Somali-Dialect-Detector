@@ -4,19 +4,14 @@ import AudioUploader from "./AudioUpload";
 export default function App() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 md:p-24">
-      <div className="w-full max-w-3xl">
-        <h1 className="mb-8 text-center text-3xl font-bold">
-          Somali Dialect Detector
-        </h1>
-        <AudioUploader />
-      </div>
-      {/* Developer Credit Footer */}
-      <footer className="mt-12 pt-6 border-t border-muted">
-        <div className="flex flex-col items-center justify-center space-y-4">
+      {/* Developer Credit Header */}
+      <header className="mt-12 pt-6 border-t border-muted">
+        <div className="flex items-center justify-center gap-5">
           <p className="text-sm text-muted-foreground">
             Developed by Mohamed Mohamud
           </p>
-          <div className="flex items-center space-x-4">
+          
+          <div className="flex items-center">
             <a
               href="https:/github.com/mohamed-tsx"
               target="_blank"
@@ -42,7 +37,13 @@ export default function App() {
             </a>
           </div>
         </div>
-      </footer>
+      </header>
+      <div className="w-full max-w-3xl">
+        <h1 className="mb-8 text-center text-3xl font-bold">
+          Somali Dialect Detector
+        </h1>
+        <AudioUploader />
+      </div>
     </main>
   );
 }
