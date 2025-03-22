@@ -1,9 +1,8 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { motion } from "framer-motion";
 
 interface AudioPlayerProps {
   file: File;
@@ -11,32 +10,40 @@ interface AudioPlayerProps {
 
 export default function AudioPlayer({ file }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [duration, setDuration] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [volume, setVolume] = useState(1);
+  const [duration, setDuration] = useState<number>(0);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [volume, setVolume] = useState<number>(1);
   const [isMuted, setIsMuted] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // Create object URL for the audio file
     const url = URL.createObjectURL(file);
     setAudioUrl(url);
 
-    // Clean up the URL when component unmounts
+    // Force load metadata when source is set
+    if (audioRef.current) {
+      audioRef.current.load();
+    }
+
     return () => {
       URL.revokeObjectURL(url);
     };
   }, [file]);
 
-  const togglePlay = () => {
+  const togglePlay = async () => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
+        setIsPlaying(false);
       } else {
-        audioRef.current.play();
+        try {
+          await audioRef.current.play();
+          setIsPlaying(true);
+        } catch (err) {
+          console.error("Audio playback failed:", err);
+        }
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -54,7 +61,7 @@ export default function AudioPlayer({ file }: AudioPlayerProps) {
   };
 
   const handleLoadedMetadata = () => {
-    if (audioRef.current) {
+    if (audioRef.current && isFinite(audioRef.current.duration)) {
       setDuration(audioRef.current.duration);
     }
   };
@@ -77,13 +84,14 @@ export default function AudioPlayer({ file }: AudioPlayerProps) {
   };
 
   const formatTime = (time: number) => {
+    if (!isFinite(time) || time <= 0) return "--:--";
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       {audioUrl && (
         <audio
           ref={audioRef}
@@ -95,22 +103,27 @@ export default function AudioPlayer({ file }: AudioPlayerProps) {
         />
       )}
 
-      <div className="flex items-center space-x-2">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex items-center space-x-2"
+      >
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8 rounded-full"
+          className="h-10 w-10 rounded-full"
           onClick={togglePlay}
         >
           {isPlaying ? (
-            <Pause className="h-4 w-4" />
+            <Pause className="h-5 w-5" />
           ) : (
-            <Play className="h-4 w-4" />
+            <Play className="h-5 w-5" />
           )}
           <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>
         </Button>
 
-        <div className="flex flex-1 items-center space-x-2">
+        <div className="flex flex-1 items-center space-x-3">
           <span className="w-10 text-xs tabular-nums text-muted-foreground">
             {formatTime(currentTime)}
           </span>
@@ -135,9 +148,9 @@ export default function AudioPlayer({ file }: AudioPlayerProps) {
             onClick={toggleMute}
           >
             {isMuted ? (
-              <VolumeX className="h-4 w-4" />
+              <VolumeX className="h-5 w-5" />
             ) : (
-              <Volume2 className="h-4 w-4" />
+              <Volume2 className="h-5 w-5" />
             )}
             <span className="sr-only">{isMuted ? "Unmute" : "Mute"}</span>
           </Button>
@@ -150,7 +163,7 @@ export default function AudioPlayer({ file }: AudioPlayerProps) {
             className="w-20"
           />
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
