@@ -1,5 +1,4 @@
 asgiref==3.8.1
-audioop-lts==0.2.1
 audioread==3.0.1
 certifi==2025.1.31
 cffi==1.17.1
