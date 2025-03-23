@@ -1,0 +1,70 @@
+name: Deploy Django and React App to Railway
+
+on:
+  push:
+    branches:
+      - main  # Or your desired branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Python for Django
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      # Step 3: Install Django dependencies
+      - name: Install dependencies (Django)
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      # Step 4: Set up Node.js for React
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      # Step 5: Install React dependencies
+      - name: Install dependencies (React)
+        run: |
+          cd frontend  # Adjust this path to your React app directory
+          npm install
+
+      # Step 6: Build React app for production
+      - name: Build React app
+        run: |
+          cd frontend  # Adjust this path to your React app directory
+          npm run build
+
+      # Step 7: Copy the React build to Django's static folder
+      - name: Copy React Build to Django Static Folder
+        run: |
+          cp -r frontend/build/* backend/static/
+
+      # Step 8: Collect static files for Django
+      - name: Collect static files
+        run: |
+          source venv/bin/activate
+          python manage.py collectstatic --noinput
+
+      # Step 9: Run Django migrations (if using a database)
+      - name: Run Django Migrations
+        run: |
+          source venv/bin/activate
+          python manage.py migrate
+
+      # Step 10: Deploy to Railway
+      - name: Deploy to Railway
+        uses: railwayapp/railway-action@v1
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}  # Set in GitHub secrets
+          project_id: ${{ secrets.RAILWAY_PROJECT_ID }}  # Set in GitHub secrets
