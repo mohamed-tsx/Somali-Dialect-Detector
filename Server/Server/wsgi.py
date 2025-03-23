@@ -6,5 +6,5 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Server.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Server.Server.settings")
 application = get_wsgi_application()
