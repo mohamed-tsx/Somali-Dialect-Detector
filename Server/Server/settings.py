@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
-ROOT_URLCONF = 'Server.urls'
+ROOT_URLCONF = 'Server.Server.urls'
 
 TEMPLATES = [
     {
